@@ -280,7 +280,38 @@
     document.addEventListener('DOMContentLoaded', () => {
         const loading = document.getElementById('loading');
         const timeline = document.getElementById('timeline');
-        const dataFile = 'eventsanddates.txt';
+        
+        const rawData = `Lexington and Concord — April 19, 1775
+British Parliament repeals the Stamp Act & issues the Declaratory Act — March 18, 1766
+Treaty of Paris (end of the French & Indian War) — February 10, 1763
+First Continental Congress meets in Philadelphia — September 5, 1774
+Boston Tea Party — December 16, 1773
+Second Continental Congress adopts the Olive Branch Petition — July 5, 1775
+Benedict Arnold betrays the Continental Army — September 21, 1780
+Townshend Acts — June 29, 1767
+Cornwallis surrenders at Yorktown — October 19, 1781
+Battle of Trenton — December 26, 1776
+Battle of Princeton — January 3, 1777
+Valley Forge encampment begins — December 19, 1777
+Stamp Act passed — March 22, 1765
+British capture Philadelphia — September 26, 1777
+Declaration of Independence adopted — July 4, 1776
+Stamp Act Congress meets — October 7, 1765
+Battle of Bunker Hill — June 17, 1775
+Tea Act — May 10, 1773
+Battle of Cowpens — January 17, 1781
+France allies with the United States — February 6, 1778
+Boston Massacre — March 5, 1770
+Articles of Confederation adopted — November 15, 1777
+Common Sense published — January 10, 1776
+Patrick Henry’s “Give me liberty, or give me death!” speech — March 23, 1775
+Nathan Hale executed — September 22, 1776
+Siege of Yorktown begins — September 28, 1781
+Battle of Saratoga surrender — October 17, 1777
+Washington appointed Commander-in-Chief — June 15, 1775
+Treaty of Paris signed — September 3, 1783
+British evacuate Boston — March 17, 1776
+British capture Charleston — May 12, 1780`;
 
         // Formal historical descriptions for events
         const eventDescriptions = {
@@ -326,23 +357,10 @@
             "The outcome of this occurrence facilitated a fundamental shift in the American Revolutionary War."
         ];
 
-        fetch(dataFile)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(text => {
-                const events = parseData(text);
-                renderTimeline(events);
-                loading.style.display = 'none';
-                observeEvents();
-            })
-            .catch(error => {
-                console.error('Error loading data:', error);
-                loading.textContent = 'Failed to load timeline data. Please ensure "eventsanddates.txt" is in the same folder.';
-            });
+        const events = parseData(rawData);
+        renderTimeline(events);
+        loading.style.display = 'none';
+        observeEvents();
 
         function parseData(text) {
             const lines = text.split('\n');
