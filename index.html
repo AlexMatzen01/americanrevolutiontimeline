@@ -7,14 +7,26 @@
     <title>American Revolution Timeline</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
+            --primary-color: #B31942;
+            --secondary-color: #e1641c;
             --accent-color: #ecf0f1;
             --text-color: #333;
             --bg-color: #685e5e;
             --card-bg: #adadad;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
             --transition-speed: 0.3s;
+        }
+
+        .starry-background {
+            position: relative;
+                background-image: url("images/star.png");
+        
+            background-repeat: repeat;
+            background-color: #002868;
+            background-size: calc(100% / 8) auto;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         * {
@@ -276,6 +288,7 @@
     <p class="names">Alex Matzen, Easton Ghram, & Landon Pfannenstiel</p>
 </header>
 
+<div class="starry-background">
 <div class="container">
     <div id="loading">Loading timeline data...</div>
     <div class="timeline" id="timeline">
@@ -510,6 +523,6 @@ British capture Charleston — May 12, 1780`;
     }
 });
 </script>
-
+</div>
 </body>
 </html>
