@@ -11,8 +11,8 @@
             --secondary-color: #e74c3c;
             --accent-color: #ecf0f1;
             --text-color: #333;
-            --bg-color: #f4f4f4;
-            --card-bg: #fff;
+            --bg-color: #685e5e;
+            --card-bg: #adadad;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
             --transition-speed: 0.3s;
         }
@@ -50,6 +50,12 @@
         p.subtitle {
             font-style: italic;
             opacity: 0.8;
+            animation: fadeInDown 0.8s ease-out 0.2s backwards;
+        }
+
+        p.names {
+            font-style: oblique;
+            opacity: 1.0;
             animation: fadeInDown 0.8s ease-out 0.2s backwards;
         }
 
@@ -267,6 +273,7 @@
 <header>
     <h1>American Revolution Timeline</h1>
     <p class="subtitle">A journey through independence</p>
+    <p class="names">Alex Matzen, Easton Ghram, & Landon Pfannenstiel</p>
 </header>
 
 <div class="container">
@@ -277,11 +284,12 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const loading = document.getElementById('loading');
-        const timeline = document.getElementById('timeline');
-        
-        const rawData = `Lexington and Concord — April 19, 1775
+document.addEventListener('DOMContentLoaded', () => {
+    const loading = document.getElementById('loading');
+    const timeline = document.getElementById('timeline');
+
+    // Raw event data
+    const rawData = `Lexington and Concord — April 19, 1775
 British Parliament repeals the Stamp Act & issues the Declaratory Act — March 18, 1766
 Treaty of Paris (end of the French & Indian War) — February 10, 1763
 First Continental Congress meets in Philadelphia — September 5, 1774
@@ -313,8 +321,8 @@ Treaty of Paris signed — September 3, 1783
 British evacuate Boston — March 17, 1776
 British capture Charleston — May 12, 1780`;
 
-        // Formal historical descriptions for events
-        const eventDescriptions = {
+    // Event descriptions
+    const eventDescriptions = {
             "Lexington and Concord": "The first military engagements of the American Revolutionary War, marking the transition from political unrest to open armed conflict.",
             "British Parliament repeals the Stamp Act & issues the Declaratory Act": "Parliament rescinded the controversial Stamp Act but simultaneously asserted its absolute legislative authority over the colonies.",
             "Treaty of Paris (end of the French & Indian War)": "This treaty concluded the Seven Years' War, significantly expanding British territory in North America but resulting in substantial national debt.",
@@ -348,149 +356,159 @@ British capture Charleston — May 12, 1780`;
             "British capture Charleston": "A significant British victory in the South that resulted in the surrender of a large American force and the loss of a strategic port."
         };
 
-        const placeholders = [
-            "This event represented a significant milestone in the American struggle for self-governance.",
-            "Historical records indicate this development was central to the progression of the revolutionary movement.",
-            "The strategic implications of this event resonated throughout the colonial and international theaters.",
-            "Scholars characterize this period as a critical juncture in the formation of the American republic.",
-            "This development reflected the growing ideological divide between the colonies and the British Crown.",
-            "The outcome of this occurrence facilitated a fundamental shift in the American Revolutionary War."
-        ];
+    const eventImages = {
+        "Lexington and Concord": "images/lexingtonandconcord.webp",
+        "British Parliament repeals the Stamp Act & issues the Declaratory Act": "images/britishparliamentrepealsstampact.jpg",
+        "Treaty of Paris (end of the French & Indian War)": "images/treatyofparis.jpeg",
+        "First Continental Congress meets in Philadelphia": "images/fccm.jpeg",
+        "Boston Tea Party": "images/Boston_Tea_Party_w.jpg",
+        "Second Continental Congress adopts the Olive Branch Petition": "images/declarationsigningimage.jpg",
+        "Benedict Arnold betrays the Continental Army": "images/benedict.jpeg",
+        "Townshend Acts": "images/townshendacts.jpeg",
+        "Stamp Act passed": "images/stampacts.jpeg",
+        "British capture Philadelphia": "images/philly.jpeg",
+        "Declaration of Independence adopted": "images/DoI.webp",
+        "Cornwallis surrenders at Yorktown": "images/surrendercornwallis.jpeg",
+        "Battle of Trenton": "images/trenton.webp",
+        "Battle of Princeton": "images/princeton.webp",
+        "Valley Forge encampment begins": "images/valleyforge.jpeg",
+        "Stamp Act Congress meets": "images/congressstampact.jpeg",
+        "Battle of Bunker Hill": "images/bunkerhill.webp",
+        "Tea Act": "images/teaact.jpeg",
+        "Battle of Cowpens": "images/cowpens.webp",
+        "France allies with the United States": "images/francealliesus.jpeg",
+        "Boston Massacre": "images/bostonmassacre.jpeg",
+        "Articles of Confederation adopted": "images/confederation.jpeg",
+        "Common Sense published": "images/commonsense.webp",
+        "Patrick Henry’s “Give me liberty, or give me death!” speech": "images/patrickhenry.webp",
+        "Nathan Hale executed": "images/nathanhale.jpeg",
+        "Siege of Yorktown begins": "images/yorktownsiege.jpeg",
+        "Battle of Saratoga surrender": "images/saratoga.jpeg",
+        "Washington appointed Commander-in-Chief": "images/washington.jpeg",
+        "Treaty of Paris signed": "images/ToP.jpeg",
+        "British evacuate Boston": "images/evacboston.jpeg",
+        "British capture Charleston": "images/charleston.webp"
+    };
 
-        const events = parseData(rawData);
-        renderTimeline(events);
-        loading.style.display = 'none';
-        observeEvents();
+    const placeholders = [
+        "This event marked an important step toward independence.",
+        "It played a key role in the progress of the revolution.",
+        "This development affected the course of the war.",
+        "A significant moment in colonial resistance.",
+        "An important shift in relations with Britain.",
+        "A turning point in the revolutionary struggle."
+    ];
 
-        function parseData(text) {
-            const lines = text.split('\n');
-            const events = [];
+    const events = parseData(rawData);
+    renderTimeline(events);
+    loading.style.display = 'none';
+    observeEvents();
 
-            lines.forEach(line => {
-                if (!line.trim()) return;
+    function parseData(text) {
+        const lines = text.split('\n');
+        const events = [];
 
-                // Priority: " — ", then " – ", then " - "
-                let separator = null;
-                if (line.includes(" — ")) separator = " — ";
-                else if (line.includes(" – ")) separator = " – ";
-                else if (line.includes(" - ")) separator = " - ";
-                
-                if (!separator) return;
+        lines.forEach(line => {
+            if (!line.trim()) return;
 
-                const parts = line.split(separator);
-             
-                // We expect at least one part to be a date.
-                // Let's try to identify the date part.
-                let datePartIndex = -1;
-                
-                for (let i = 0; i < parts.length; i++) {
-                    if (hasDate(parts[i])) {
-                        datePartIndex = i;
-                        break; 
-                        // Assuming first valid date we find is THE date.
-                        // Or we could prefer the last part if multiple match?
-                        // Usually date is at start or end.
-                    }
-                }
+            let separator = null;
+            if (line.includes(" — ")) separator = " — ";
+            else if (line.includes(" – ")) separator = " – ";
+            else if (line.includes(" - ")) separator = " - ";
+            if (!separator) return;
 
-                if (datePartIndex === -1 && parts.length >= 2) {
-                     // Heuristic fallback: last part
-                     datePartIndex = parts.length - 1;
-                }
+            const parts = line.split(separator);
+            if (parts.length < 2) return;
 
-                if (datePartIndex !== -1) {
-                    const dateStr = parts[datePartIndex].trim();
-                    const dateObj = new Date(dateStr);
-                    
-                    if (!isNaN(dateObj.getTime())) {
-                        const titleParts = parts.filter((_, i) => i !== datePartIndex);
-                        const title = titleParts.join(separator).trim();
-                        
-                        // Check for custom description, otherwise use a placeholder
-                        let description = eventDescriptions[title];
-                        if (!description) {
-                            const descIndex = title.length % placeholders.length;
-                            description = placeholders[descIndex];
-                        }
+            const dateStr = parts[parts.length - 1].trim();
+            const title = parts.slice(0, parts.length - 1).join(separator).trim();
+            const dateObj = new Date(dateStr);
 
-                        events.push({
-                            title: title,
-                            dateStr: dateStr,
-                            dateObj: dateObj,
-                            description: description
-                        });
-                    }
-                }
+            if (isNaN(dateObj.getTime())) return;
+
+            let description = eventDescriptions[title];
+            if (!description) {
+                const index = title.length % placeholders.length;
+                description = placeholders[index];
+            }
+
+            events.push({
+                title,
+                dateStr,
+                dateObj,
+                description,
+                image: eventImages[title] || null
             });
+        });
 
-            return events.sort((a, b) => a.dateObj - b.dateObj);
-        }
+        return events.sort((a, b) => a.dateObj - b.dateObj);
+    }
 
-        function hasDate(str) {
-            return /\d{4}/.test(str);
-        }
+    function renderTimeline(events) {
+        timeline.innerHTML = '';
 
-        function renderTimeline(events) {
-            timeline.innerHTML = ''; // Clear container
+        events.forEach(event => {
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
 
-            events.forEach((event, index) => {
-                const item = document.createElement('div');
-                item.className = 'timeline-item';
-                
-                const dot = document.createElement('div');
-                dot.className = 'timeline-dot';
+            const dot = document.createElement('div');
+            dot.className = 'timeline-dot';
 
-                const content = document.createElement('div');
-                content.className = 'timeline-content';
-                
-                // Toggle description on click
-                content.addEventListener('click', () => {
-                    // Close others (optional, for accordion effect)
-                    document.querySelectorAll('.timeline-content.active').forEach(el => {
-                        if (el !== content) el.classList.remove('active');
-                    });
-                    content.classList.toggle('active');
+            const content = document.createElement('div');
+            content.className = 'timeline-content';
+
+            content.addEventListener('click', () => {
+                document.querySelectorAll('.timeline-content.active').forEach(el => {
+                    if (el !== content) el.classList.remove('active');
                 });
-
-                const date = document.createElement('span');
-                date.className = 'timeline-date';
-                date.textContent = event.dateStr;
-
-                const title = document.createElement('h3');
-                title.className = 'timeline-title';
-                title.textContent = event.title;
-
-                const desc = document.createElement('p');
-                desc.className = 'timeline-desc';
-                desc.textContent = event.description;
-
-                content.appendChild(date);
-                content.appendChild(title);
-                content.appendChild(desc);
-
-                item.appendChild(dot);
-                item.appendChild(content);
-
-                timeline.appendChild(item);
-            });
-        }
-
-        function observeEvents() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, {
-                threshold: 0.1
+                content.classList.toggle('active');
             });
 
-            document.querySelectorAll('.timeline-item').forEach(item => {
-                observer.observe(item);
+            const date = document.createElement('span');
+            date.className = 'timeline-date';
+            date.textContent = event.dateStr;
+
+            const title = document.createElement('h3');
+            title.className = 'timeline-title';
+            title.textContent = event.title;
+
+            const desc = document.createElement('p');
+            desc.className = 'timeline-desc';
+            desc.textContent = event.description;
+
+            content.appendChild(date);
+            content.appendChild(title);
+
+            if (event.image) {
+                const img = document.createElement('img');
+                img.src = event.image;
+                img.alt = event.title;
+                img.className = 'timeline-image';
+                content.appendChild(img);
+            }
+
+            content.appendChild(desc);
+
+            item.appendChild(dot);
+            item.appendChild(content);
+            timeline.appendChild(item);
+        });
+    }
+
+    function observeEvents() {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
             });
-        }
-    });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            observer.observe(item);
+        });
+    }
+});
 </script>
 
 </body>
